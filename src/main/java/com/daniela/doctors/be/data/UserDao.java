@@ -3,6 +3,7 @@ package com.daniela.doctors.be.data;
 import com.daniela.doctors.be.logic.admin.Admin;
 import com.daniela.doctors.be.logic.doctor.Doctor;
 import com.daniela.doctors.be.logic.doctor.Schedule;
+import com.daniela.doctors.be.logic.patient.MedicalTest;
 import com.daniela.doctors.be.logic.patient.Patient;
 import com.daniela.doctors.be.logic.patient.Record;
 import java.sql.PreparedStatement;
@@ -140,7 +141,25 @@ public class UserDao {
             return false;
         }
     }
-  
+
+    public boolean addMedicalTest(String pEmail, MedicalTest medicalTest) {
+        try {
+            String sql = "{call addMedicalTest(?,?,?,?,?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, pEmail);
+            stm.setString(2, medicalTest.getDescription());
+            stm.setString(3, medicalTest.getName());
+            stm.setString(4, medicalTest.getDate());
+            stm.setString(5, "");
+            int count = db.executeUpdate(stm);
+
+            return count > 0;
+        } catch (SQLException | Error e) {
+            System.out.println("ERROR: addMedicalTest: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean addPatient(String pEmail, Patient patient) {
         try {
             String sql = "{call addPatient(?,?,?,?,?,?,?,?)}";
@@ -186,4 +205,105 @@ public class UserDao {
             return false;
         }
     }
+    
+    public boolean activateDoctor(String email) {
+        try {
+            String sql = "{call activateDoctor(?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, email);
+            int count = db.executeUpdate(stm);
+
+            return count > 0;
+        } catch (SQLException | Error e) {
+            System.out.println("ERROR: activateDoctor: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public ArrayList<Patient> getPatients(String pEmail) {
+        try {
+            String sql = "{call getPatients(?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, pEmail);
+            ResultSet rs = db.executeQuery(stm);
+
+            ArrayList<Patient> patientList = new ArrayList<>();
+
+            while (rs.next()) {
+                String patientId = rs.getString("patientId");
+                String name = rs.getString("name");
+                String lastname = rs.getString("lastname");
+                String email = rs.getString("email");
+                String id = rs.getString("id");
+                int age = rs.getInt("age");
+                String gender = rs.getString("gender");
+                String phone = rs.getString("phone");
+                int active = rs.getInt("active");
+
+                ArrayList<Record> recordList = getRecords(patientId);
+
+                Patient patient = new Patient(name, lastname, email, id, age, gender, phone, active, recordList);
+                patientList.add(patient);
+            }
+
+            return patientList;
+        } catch (SQLException e) {
+            System.out.println("ERROR: getPatients: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    public ArrayList<Record> getRecords(String pPatientId) {
+        try {
+            String sql = "{call getRecords(?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, pPatientId);
+            ResultSet rs = db.executeQuery(stm);
+
+            ArrayList<Record> recordList = new ArrayList<>();
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                int recordId = rs.getInt("recordId");
+                int enabled = rs.getInt("enabled");
+
+                Record record = new Record(name, recordId, enabled);
+                recordList.add(record);
+            }
+
+            return recordList;
+        } catch (SQLException e) {
+            System.out.println("ERROR: getRecords: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    public ArrayList<Doctor> getDoctors() {
+        try {
+            String sql = "{call getDoctors()}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            ResultSet rs = db.executeQuery(stm);
+
+            ArrayList<Doctor> doctorList = new ArrayList<>();
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                String lastname = rs.getString("lastname");
+                String email = rs.getString("email");
+                String id = rs.getString("id");
+                String picture = rs.getString("picture");
+                String specialty = rs.getString("specialty");
+                String location = rs.getString("location");
+                int active = rs.getInt("active");
+
+                Doctor user = new Doctor(name, lastname, email, id, picture, specialty, location, active);
+                doctorList.add(user);
+            }
+
+            return doctorList;
+        } catch (SQLException e) {
+            return new ArrayList<>();
+        }
+    }
+
 }

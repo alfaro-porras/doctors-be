@@ -32,6 +32,17 @@ public class Doctor {
         this.location = location;
     }
     
+     public Doctor(String name, String lastname, String email, String id, String picture, String specialty, String location, int active) {
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
+        this.id = id;
+        this.picture = picture;
+        this.specialty = specialty;
+        this.location = location;
+        this.active = active;
+    }
+    
     
 
     public Doctor(String name, String lastname, String email, String id, String picture, String password, String specialty, String location, double fee, int frequency, int active, int specialtyId, int locationId, ArrayList<Schedule> schedule) {

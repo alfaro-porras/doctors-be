@@ -3,8 +3,9 @@ package com.daniela.doctors.be.logic;
 import com.daniela.doctors.be.data.UserDao;
 import com.daniela.doctors.be.logic.admin.Admin;
 import com.daniela.doctors.be.logic.doctor.Doctor;
-import com.daniela.doctors.be.logic.login.Login;
+import com.daniela.doctors.be.logic.patient.MedicalTest;
 import com.daniela.doctors.be.logic.patient.Patient;
+import java.util.ArrayList;
 
 public class Service {
 
@@ -42,6 +43,22 @@ public class Service {
    
     public boolean addPatient(String email, Patient patient) {
         return userDao.addPatient(email, patient);
+    }
+   
+    public ArrayList<Patient> getPatients(String email) {
+        return userDao.getPatients(email);
+    }
+   
+    public boolean activateDoctor(String email) {
+        return userDao.activateDoctor(email);
+    }
+
+    public boolean addMedicalTest(String email, MedicalTest medicalTest) {
+        return userDao.addMedicalTest(email, medicalTest);
+    }
+    
+    public ArrayList<Doctor> getDoctors() {
+        return userDao.getDoctors();
     }
 
 

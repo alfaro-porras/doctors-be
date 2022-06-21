@@ -1,19 +1,18 @@
+
 package com.daniela.doctors.be.response;
 
-import com.daniela.doctors.be.logic.patient.Patient;
+import com.daniela.doctors.be.logic.doctor.Doctor;
 import java.util.ArrayList;
 
-public class PatientResponse {
+public class DoctorsResponse {
     private boolean success;
     private String error;
-    private ArrayList<Patient> data;
+    private ArrayList<Doctor> data;
 
-    public PatientResponse() {
+    public DoctorsResponse() {
     }
-    
-    
 
-    public PatientResponse(boolean success, String error, ArrayList<Patient> data) {
+    public DoctorsResponse(boolean success, String error, ArrayList<Doctor> data) {
         this.success = success;
         this.error = error;
         this.data = data;
@@ -35,11 +34,11 @@ public class PatientResponse {
         this.error = error;
     }
 
-    public ArrayList<Patient> getData() {
+    public ArrayList<Doctor> getData() {
         return data;
     }
 
-    public void setData(ArrayList<Patient> data) {
+    public void setData(ArrayList<Doctor> data) {
         this.data = data;
     }
 }
