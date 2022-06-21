@@ -4,6 +4,7 @@ import com.daniela.doctors.be.data.UserDao;
 import com.daniela.doctors.be.logic.admin.Admin;
 import com.daniela.doctors.be.logic.doctor.Doctor;
 import com.daniela.doctors.be.logic.login.Login;
+import com.daniela.doctors.be.logic.patient.Patient;
 
 public class Service {
 
@@ -37,6 +38,10 @@ public class Service {
  
     public Doctor isDoctorLogin(Doctor doctor) {
         return userDao.isDoctorLogin(doctor);
+    }
+   
+    public boolean addPatient(String email, Patient patient) {
+        return userDao.addPatient(email, patient);
     }
 
 

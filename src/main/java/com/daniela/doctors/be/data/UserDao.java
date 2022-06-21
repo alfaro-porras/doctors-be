@@ -3,6 +3,8 @@ package com.daniela.doctors.be.data;
 import com.daniela.doctors.be.logic.admin.Admin;
 import com.daniela.doctors.be.logic.doctor.Doctor;
 import com.daniela.doctors.be.logic.doctor.Schedule;
+import com.daniela.doctors.be.logic.patient.Patient;
+import com.daniela.doctors.be.logic.patient.Record;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -135,6 +137,52 @@ public class UserDao {
             return count > 0;
         } catch (SQLException | Error e) {
             System.out.println("ERROR: addSchedule: " + e.getMessage());
+            return false;
+        }
+    }
+  
+    public boolean addPatient(String pEmail, Patient patient) {
+        try {
+            String sql = "{call addPatient(?,?,?,?,?,?,?,?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, pEmail);
+            stm.setString(2, patient.getName());
+            stm.setString(3, patient.getLastname());
+            stm.setString(4, patient.getEmail());
+            stm.setString(5, patient.getId());
+            stm.setInt(6, patient.getAge());
+            stm.setString(7, patient.getGender());
+            stm.setString(8, patient.getPhone());
+            int count = db.executeUpdate(stm);
+
+            if (count > 0) {
+                ArrayList<Record> recordList = patient.getRecords();
+                for (Record record : recordList) {
+                    addRecord(patient.getEmail(), record.getRecordId(), record.getEnabled());
+                }
+
+                return true;
+            }
+
+            return false;
+        } catch (SQLException | Error e) {
+            System.out.println("ERROR: addPatient: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean addRecord(String email, int recordId, int enabled) {
+        try {
+            String sql = "{call addRecord(?,?,?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, email);
+            stm.setInt(2, recordId);
+            stm.setInt(3, enabled);
+            int count = db.executeUpdate(stm);
+
+            return count > 0;
+        } catch (SQLException | Error e) {
+            System.out.println("ERROR: addRecord: " + e.getMessage());
             return false;
         }
     }
