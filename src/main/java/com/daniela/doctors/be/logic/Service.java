@@ -60,6 +60,10 @@ public class Service {
     public ArrayList<Doctor> getDoctors() {
         return userDao.getDoctors();
     }
+   
+    public Doctor getDoctor(String email) {
+        return userDao.getDoctor(email);
+    }
 
 
     public Service() {

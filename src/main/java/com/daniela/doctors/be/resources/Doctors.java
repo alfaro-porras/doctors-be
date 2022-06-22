@@ -52,6 +52,22 @@ public class Doctors {
         }
     }
 
+    @GET
+    @Path("{email}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public DoctorResponse getDoctor(@PathParam("email") String email) {
+        try {
+            Doctor doctor = Service.instance().getDoctor(email);
+            if (doctor == null) {
+                return new DoctorResponse(false, "Error", null);
+            }
+
+            return new DoctorResponse(true, "", doctor);
+        } catch (Exception ex) {
+            return new DoctorResponse(false, ex.getMessage(), null);
+        }
+    }
+
     @POST
     @Path("login")
     @Consumes(MediaType.APPLICATION_JSON)

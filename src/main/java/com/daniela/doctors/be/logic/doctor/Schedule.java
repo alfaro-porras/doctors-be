@@ -20,6 +20,13 @@ public class Schedule {
         this.dayId = dayId;
         this.doctorId = doctorId;
     }
+    
+    public Schedule(String start, String end, String day, int active) {
+        this.start = start;
+        this.end = end;
+        this.day = day;
+        this.active = active;
+    }
 
     public String getStart() {
         return start;

@@ -32,7 +32,7 @@ public class Doctor {
         this.location = location;
     }
     
-     public Doctor(String name, String lastname, String email, String id, String picture, String specialty, String location, int active) {
+     public Doctor(String name, String lastname, String email, String id, String picture, String specialty, String location, int frequency, int active, ArrayList<Schedule> schedule) {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
@@ -40,7 +40,9 @@ public class Doctor {
         this.picture = picture;
         this.specialty = specialty;
         this.location = location;
+        this.frequency = frequency;
         this.active = active;
+        this.schedule = schedule;
     }
     
     

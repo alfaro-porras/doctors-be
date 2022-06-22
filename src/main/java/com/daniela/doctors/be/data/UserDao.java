@@ -123,6 +123,37 @@ public class UserDao {
             return false;
         }
     }
+    
+    public Doctor getDoctor(String pEmail) {
+        try {
+            String sql = "{call getDoctor(?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, pEmail);
+            ResultSet rs = db.executeQuery(stm);
+
+            if (rs.next()) {
+                String name = rs.getString("name");
+                String lastname = rs.getString("lastname");
+                String email = rs.getString("email");
+                String id = rs.getString("id");
+                String picture = rs.getString("picture");
+                String specialty = rs.getString("specialty");
+                String location = rs.getString("location");
+                int frequency = rs.getInt("frequency");
+                int active = rs.getInt("active");
+                
+                ArrayList<Schedule> scheduleList = getSchedule(email);
+
+                Doctor doctor = new Doctor(name, lastname, email, id, picture, specialty, location, frequency, active, scheduleList);
+                return doctor;
+            }
+
+            return null;
+        } catch (SQLException | Error e) {
+            System.out.println("ERROR: createDoctor: " + e.getMessage());
+            return null;
+        }
+    }
 
     public boolean addSchedule(String pEmail, Schedule schedule) {
         try {
@@ -205,7 +236,7 @@ public class UserDao {
             return false;
         }
     }
-    
+
     public boolean activateDoctor(String email) {
         try {
             String sql = "{call activateDoctor(?)}";
@@ -294,14 +325,43 @@ public class UserDao {
                 String picture = rs.getString("picture");
                 String specialty = rs.getString("specialty");
                 String location = rs.getString("location");
+                int frequency = rs.getInt("frequency");
                 int active = rs.getInt("active");
+                
+                ArrayList<Schedule> scheduleList = getSchedule(email);
 
-                Doctor user = new Doctor(name, lastname, email, id, picture, specialty, location, active);
+                Doctor user = new Doctor(name, lastname, email, id, picture, specialty, location, frequency, active, scheduleList);
                 doctorList.add(user);
             }
 
             return doctorList;
         } catch (SQLException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    public ArrayList<Schedule> getSchedule(String email) {
+        try {
+            String sql = "{call getSchedule(?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, email);
+            ResultSet rs = db.executeQuery(stm);
+
+            ArrayList<Schedule> scheduleList = new ArrayList<>();
+
+            while (rs.next()) {
+                String start = rs.getString("start");
+                String end = rs.getString("end");
+                String day = rs.getString("day");
+                int active = rs.getInt("active");
+
+                Schedule schedule = new Schedule(start, end, day, active);
+                scheduleList.add(schedule);
+            }
+
+            return scheduleList;
+        } catch (SQLException e) {
+            System.out.println("ERROR: getRecords: " + e.getMessage());
             return new ArrayList<>();
         }
     }
