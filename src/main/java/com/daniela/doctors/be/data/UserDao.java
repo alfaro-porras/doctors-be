@@ -1,6 +1,7 @@
 package com.daniela.doctors.be.data;
 
 import com.daniela.doctors.be.logic.admin.Admin;
+import com.daniela.doctors.be.logic.appointment.Appointment;
 import com.daniela.doctors.be.logic.doctor.Doctor;
 import com.daniela.doctors.be.logic.doctor.Schedule;
 import com.daniela.doctors.be.logic.patient.MedicalTest;
@@ -190,6 +191,23 @@ public class UserDao {
             return false;
         }
     }
+   
+    public boolean addAppointment(String doctorEmail, String patientEmail, Appointment appointment) {
+        try {
+            String sql = "{call addAppointment(?,?,?,?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, patientEmail);
+            stm.setString(2, doctorEmail);
+            stm.setString(3, appointment.getTime());
+            stm.setString(4, appointment.getDate());
+            int count = db.executeUpdate(stm);
+
+            return count > 0;
+        } catch (SQLException | Error e) {
+            System.out.println("ERROR: addMedicalTest: " + e.getMessage());
+            return false;
+        }
+    }
 
     public boolean addPatient(String pEmail, Patient patient) {
         try {
@@ -251,6 +269,23 @@ public class UserDao {
         }
     }
 
+    public boolean updateAppointment(String appointmentId, Appointment appointment) {
+        try {
+            String sql = "{call updateAppointment(?,?,?,?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setInt(1, Integer.parseInt(appointmentId));
+            stm.setString(2, appointment.getNotes());
+            stm.setString(3, appointment.getDiagnosis());
+            stm.setString(4, appointment.getPrescription());
+            int count = db.executeUpdate(stm);
+
+            return count > 0;
+        } catch (SQLException | Error e) {
+            System.out.println("ERROR: updateAppointment: " + e.getMessage());
+            return false;
+        }
+    }
+
     public ArrayList<Patient> getPatients(String pEmail) {
         try {
             String sql = "{call getPatients(?)}";
@@ -281,6 +316,68 @@ public class UserDao {
         } catch (SQLException e) {
             System.out.println("ERROR: getPatients: " + e.getMessage());
             return new ArrayList<>();
+        }
+    }
+    
+    public ArrayList<Appointment> getAppointments(String pEmail) {
+        try {
+            String sql = "{call getAppointments(?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, pEmail);
+            ResultSet rs = db.executeQuery(stm);
+
+            ArrayList<Appointment> appointmentList = new ArrayList<>();
+
+            while (rs.next()) {
+                String time = rs.getString("time");
+                String date = rs.getString("date");
+                String notes = rs.getString("notes");
+                String diagnosis = rs.getString("diagnosis");
+                String prescription = rs.getString("prescription");
+                String state = rs.getString("state");
+                String patientName = rs.getString("patientName");
+                String medicalTestName = rs.getString("medicalTestName");
+                int appointmentId = rs.getInt("appointmentId");
+
+
+                Appointment appointment = new Appointment( time,  date,  notes,  diagnosis,  prescription,  state,  patientName,  medicalTestName,  appointmentId);
+                appointmentList.add(appointment);
+            }
+
+            return appointmentList;
+        } catch (SQLException e) {
+            System.out.println("ERROR: getAppointments: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    public Appointment getAppointment(String pAppointmentId) {
+        try {
+            String sql = "{call getAppointment(?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setInt(1, Integer.parseInt(pAppointmentId));
+            ResultSet rs = db.executeQuery(stm);
+
+            if (rs.next()) {
+                String time = rs.getString("time");
+                String date = rs.getString("date");
+                String notes = rs.getString("notes");
+                String diagnosis = rs.getString("diagnosis");
+                String prescription = rs.getString("prescription");
+                String state = rs.getString("state");
+                String patientName = rs.getString("patientName");
+                String medicalTestName = rs.getString("medicalTestName");
+                int appointmentId = rs.getInt("appointmentId");
+
+
+                Appointment appointment = new Appointment( time,  date,  notes,  diagnosis,  prescription,  state,  patientName,  medicalTestName,  appointmentId);
+                return appointment;
+            }
+
+            return null;
+        } catch (SQLException e) {
+            System.out.println("ERROR: getAppointment: " + e.getMessage());
+            return null;
         }
     }
 

@@ -1,9 +1,12 @@
 package com.daniela.doctors.be.resources;
 
 import com.daniela.doctors.be.logic.Service;
+import com.daniela.doctors.be.logic.appointment.Appointment;
 import com.daniela.doctors.be.logic.doctor.Doctor;
 import com.daniela.doctors.be.logic.patient.MedicalTest;
 import com.daniela.doctors.be.logic.patient.Patient;
+import com.daniela.doctors.be.response.AppointmentResponse;
+import com.daniela.doctors.be.response.AppointmentsResponse;
 import com.daniela.doctors.be.response.DoctorResponse;
 import com.daniela.doctors.be.response.DoctorsResponse;
 import com.daniela.doctors.be.response.GenericResponse;
@@ -120,6 +123,57 @@ public class Doctors {
         }
     }
 
+    @GET
+    @Path("{email}/appointments")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON})
+    public AppointmentsResponse getAppointments(@PathParam("email") String email) {
+        try {
+            ArrayList<Appointment> appointmentList = Service.instance().getAppointments(email);
+            if (appointmentList == null || appointmentList.isEmpty()) {
+                return new AppointmentsResponse(false, "Error", null);
+            }
+
+            return new AppointmentsResponse(true, "", appointmentList);
+        } catch (Exception ex) {
+            return new AppointmentsResponse(false, ex.getMessage(), null);
+        }
+    }
+   
+    @GET
+    @Path("appointments/{appointmentId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON})
+    public AppointmentResponse getAppointment(@PathParam("appointmentId") String appointmentId) {
+        try {
+            Appointment appointment = Service.instance().getAppointment(appointmentId);
+            if (appointment == null) {
+                return new AppointmentResponse(false, "Error", null);
+            }
+
+            return new AppointmentResponse(true, "", appointment);
+        } catch (Exception ex) {
+            return new AppointmentResponse(false, ex.getMessage(), null);
+        }
+    }
+
+    @PUT
+    @Path("appointments/{appointmentId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON})
+    public GenericResponse updateAppointment(@PathParam("appointmentId") String appointmentId, Appointment appointment) {
+        try {
+            boolean success = Service.instance().updateAppointment(appointmentId, appointment);
+            if (!success) {
+                return new GenericResponse(false, "Error");
+            }
+
+            return new GenericResponse(true, "");
+        } catch (Exception ex) {
+            return new GenericResponse(false, ex.getMessage());
+        }
+    }
+
     @POST
     @Path("patients/{email}/medicaltest")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -144,6 +198,26 @@ public class Doctors {
     public GenericResponse activateDoctor(@PathParam("email") String email) {
         try {
             boolean success = Service.instance().activateDoctor(email);
+
+            if (!success) {
+                return new GenericResponse(false, "Error");
+            }
+
+            return new GenericResponse(true, "");
+        } catch (Exception ex) {
+            return new GenericResponse(false, ex.getMessage());
+        }
+    }
+
+    @POST
+    @Path("{doctorEmail}/patients/{patientEmail}/appointment")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON})
+    public GenericResponse addAppointment(@PathParam("doctorEmail") String doctorEmail, @PathParam("patientEmail") String patientEmail, Appointment appointment) {
+        try {
+            System.out.println("----doctorEmail" + doctorEmail);
+            System.out.println("----patientEmail" + patientEmail);
+            boolean success = Service.instance().addAppointment(doctorEmail, patientEmail, appointment);
 
             if (!success) {
                 return new GenericResponse(false, "Error");

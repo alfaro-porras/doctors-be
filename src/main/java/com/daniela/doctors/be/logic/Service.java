@@ -2,6 +2,7 @@ package com.daniela.doctors.be.logic;
 
 import com.daniela.doctors.be.data.UserDao;
 import com.daniela.doctors.be.logic.admin.Admin;
+import com.daniela.doctors.be.logic.appointment.Appointment;
 import com.daniela.doctors.be.logic.doctor.Doctor;
 import com.daniela.doctors.be.logic.patient.MedicalTest;
 import com.daniela.doctors.be.logic.patient.Patient;
@@ -48,13 +49,29 @@ public class Service {
     public ArrayList<Patient> getPatients(String email) {
         return userDao.getPatients(email);
     }
+ 
+    public Appointment getAppointment(String appointmentId) {
+        return userDao.getAppointment(appointmentId);
+    }
+   
+    public ArrayList<Appointment> getAppointments(String email) {
+        return userDao.getAppointments(email);
+    }
    
     public boolean activateDoctor(String email) {
         return userDao.activateDoctor(email);
     }
+  
+    public boolean updateAppointment(String appointmentId, Appointment appointment) {
+        return userDao.updateAppointment(appointmentId, appointment);
+    }
 
     public boolean addMedicalTest(String email, MedicalTest medicalTest) {
         return userDao.addMedicalTest(email, medicalTest);
+    }
+   
+    public boolean addAppointment(String doctorEmail, String patientEmail, Appointment appointment) {
+        return userDao.addAppointment(doctorEmail, patientEmail, appointment);
     }
     
     public ArrayList<Doctor> getDoctors() {
