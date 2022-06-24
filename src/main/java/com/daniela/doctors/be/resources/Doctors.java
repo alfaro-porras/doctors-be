@@ -10,6 +10,7 @@ import com.daniela.doctors.be.response.AppointmentsResponse;
 import com.daniela.doctors.be.response.DoctorResponse;
 import com.daniela.doctors.be.response.DoctorsResponse;
 import com.daniela.doctors.be.response.GenericResponse;
+import com.daniela.doctors.be.response.MedicalTestsResponse;
 import com.daniela.doctors.be.response.PatientResponse;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -189,6 +190,24 @@ public class Doctors {
             return new GenericResponse(true, "");
         } catch (Exception ex) {
             return new GenericResponse(false, ex.getMessage());
+        }
+    }
+
+    @GET
+    @Path("patients/{email}/medicaltest/list")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON})
+    public MedicalTestsResponse getMedicalTestList(@PathParam("email") String email) {
+        try {
+            ArrayList<MedicalTest> medicalTestList = Service.instance().getMedicalTestList(email);
+
+            if (medicalTestList == null || medicalTestList.isEmpty()) {
+                return new MedicalTestsResponse(false, "Error", null);
+            }
+
+            return new MedicalTestsResponse(true, "", medicalTestList);
+        } catch (Exception ex) {
+            return new MedicalTestsResponse(false, ex.getMessage(), null);
         }
     }
 

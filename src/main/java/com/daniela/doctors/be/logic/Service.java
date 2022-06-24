@@ -81,6 +81,10 @@ public class Service {
     public Doctor getDoctor(String email) {
         return userDao.getDoctor(email);
     }
+ 
+    public ArrayList<MedicalTest> getMedicalTestList(String email) {
+        return userDao.getMedicalTestList(email);
+    }
 
 
     public Service() {

@@ -124,7 +124,7 @@ public class UserDao {
             return false;
         }
     }
-    
+
     public Doctor getDoctor(String pEmail) {
         try {
             String sql = "{call getDoctor(?)}";
@@ -142,7 +142,7 @@ public class UserDao {
                 String location = rs.getString("location");
                 int frequency = rs.getInt("frequency");
                 int active = rs.getInt("active");
-                
+
                 ArrayList<Schedule> scheduleList = getSchedule(email);
 
                 Doctor doctor = new Doctor(name, lastname, email, id, picture, specialty, location, frequency, active, scheduleList);
@@ -191,7 +191,7 @@ public class UserDao {
             return false;
         }
     }
-   
+
     public boolean addAppointment(String doctorEmail, String patientEmail, Appointment appointment) {
         try {
             String sql = "{call addAppointment(?,?,?,?)}";
@@ -318,7 +318,7 @@ public class UserDao {
             return new ArrayList<>();
         }
     }
-    
+
     public ArrayList<Appointment> getAppointments(String pEmail) {
         try {
             String sql = "{call getAppointments(?)}";
@@ -339,8 +339,7 @@ public class UserDao {
                 String medicalTestName = rs.getString("medicalTestName");
                 int appointmentId = rs.getInt("appointmentId");
 
-
-                Appointment appointment = new Appointment( time,  date,  notes,  diagnosis,  prescription,  state,  patientName,  medicalTestName,  appointmentId);
+                Appointment appointment = new Appointment(time, date, notes, diagnosis, prescription, state, patientName, medicalTestName, appointmentId);
                 appointmentList.add(appointment);
             }
 
@@ -369,8 +368,7 @@ public class UserDao {
                 String medicalTestName = rs.getString("medicalTestName");
                 int appointmentId = rs.getInt("appointmentId");
 
-
-                Appointment appointment = new Appointment( time,  date,  notes,  diagnosis,  prescription,  state,  patientName,  medicalTestName,  appointmentId);
+                Appointment appointment = new Appointment(time, date, notes, diagnosis, prescription, state, patientName, medicalTestName, appointmentId);
                 return appointment;
             }
 
@@ -424,7 +422,7 @@ public class UserDao {
                 String location = rs.getString("location");
                 int frequency = rs.getInt("frequency");
                 int active = rs.getInt("active");
-                
+
                 ArrayList<Schedule> scheduleList = getSchedule(email);
 
                 Doctor user = new Doctor(name, lastname, email, id, picture, specialty, location, frequency, active, scheduleList);
@@ -432,6 +430,31 @@ public class UserDao {
             }
 
             return doctorList;
+        } catch (SQLException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    public ArrayList<MedicalTest> getMedicalTestList(String pEmail) {
+        try {
+            String sql = "{call getMedicalTestList(?)}";
+            PreparedStatement stm = db.prepareStatement(sql);
+            stm.setString(1, pEmail);
+            ResultSet rs = db.executeQuery(stm);
+
+            ArrayList<MedicalTest> medicalTestList = new ArrayList<>();
+
+            while (rs.next()) {
+                String description = rs.getString("description");
+                String name = rs.getString("name");
+                String date = rs.getString("date");
+                String pdf = rs.getString("pdf");
+
+                MedicalTest medicalTest = new MedicalTest(description, name, date, pdf, 1);
+                medicalTestList.add(medicalTest);
+            }
+
+            return medicalTestList;
         } catch (SQLException e) {
             return new ArrayList<>();
         }
