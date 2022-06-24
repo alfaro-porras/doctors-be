@@ -32,12 +32,18 @@ public class Doctors {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void create(Doctor doctor) {
+    @Produces({MediaType.APPLICATION_JSON})
+    public GenericResponse create(Doctor doctor) {
         try {
             boolean success = Service.instance().createDoctor(doctor);
-            System.out.println("---success: " + success);
+
+            if (!success) {
+                return new GenericResponse(false, "Error");
+            }
+
+            return new GenericResponse(true, "");
         } catch (Exception ex) {
-            throw new NotAcceptableException();
+            return new GenericResponse(false, ex.getMessage());
         }
     }
 

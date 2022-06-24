@@ -3,6 +3,7 @@ package com.daniela.doctors.be.resources;
 import com.daniela.doctors.be.logic.Service;
 import com.daniela.doctors.be.logic.admin.Admin;
 import com.daniela.doctors.be.response.AdminResponse;
+import com.daniela.doctors.be.response.GenericResponse;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotAcceptableException;
@@ -32,13 +33,19 @@ public class Admins {
     String location = "C:/AAA/images/";
 
     @POST
+    @Produces({MediaType.APPLICATION_JSON})
     @Consumes(MediaType.APPLICATION_JSON)
-    public void create(Admin admin) {
+    public GenericResponse create(Admin admin) {
         try {
             boolean success = Service.instance().createAdmin(admin);
-            System.out.println("---success: " + success);
+            
+            if (!success) {
+                return new GenericResponse(false, "Error");
+            }
+
+            return new GenericResponse(true, "");
         } catch (Exception ex) {
-            throw new NotAcceptableException();
+            return new GenericResponse(false, ex.getMessage());
         }
     }
 
@@ -58,32 +65,4 @@ public class Admins {
             return new AdminResponse(false, ex.getMessage(), null);
         }
     }
-
-//    @POST
-//    @Consumes(MediaType.MULTIPART_FORM_DATA)
-//    @Path("{email}/imagen")
-//    public void addImage(@PathParam("email") String email, @FormDataParam("imagen") InputStream in) {
-//
-//        OutputStream out;
-//        try {
-//            out = new FileOutputStream(new File(location + email));
-//            in.transferTo(out);
-//            out.close();
-//        } catch (FileNotFoundException ex) {
-//            Logger.getLogger(Admins.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (IOException ex) {
-//            Logger.getLogger(Admins.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//    }
-
-//    @GET
-//    @Path("{email}/imagen")
-//    @Produces("image/png")
-//    public Response getImge(@PathParam("email") String email) throws IOException {
-//        System.out.println(email);
-//        File file = new File(location + email);
-//        Response.ResponseBuilder response = Response.ok((Object) file);
-//        return response.build();
-//    }
 }
