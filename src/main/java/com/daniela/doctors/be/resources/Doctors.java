@@ -137,7 +137,7 @@ public class Doctors {
     public AppointmentsResponse getAppointments(@PathParam("email") String email) {
         try {
             ArrayList<Appointment> appointmentList = Service.instance().getAppointments(email);
-            if (appointmentList == null || appointmentList.isEmpty()) {
+            if (appointmentList == null) {
                 return new AppointmentsResponse(false, "Error", null);
             }
 
